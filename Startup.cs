@@ -36,7 +36,7 @@ namespace tasks
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddDbContext<TaskContext>( 
-                options => options.UseSqlServer(Configuration.GetConnectionString("Container"))
+                options => options.UseSqlServer(Configuration["MSSQL_TASK_DB"])
             );
         }
 
