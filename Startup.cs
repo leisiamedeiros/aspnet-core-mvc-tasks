@@ -36,12 +36,12 @@ namespace tasks
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddDbContext<TaskContext>( 
-                options => options.UseSqlServer(Configuration.GetConnectionString("Default"))
+                options => options.UseSqlServer(Configuration.GetConnectionString("Container"))
             );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, TaskContext context)
         {
             if (env.IsDevelopment())
             {
@@ -64,6 +64,8 @@ namespace tasks
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            DbInitializer.Initialize(context);
         }
     }
 }

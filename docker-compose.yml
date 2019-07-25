@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+  webtasks:
+    image: "aspnet.core.mvc.tasks"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: webtasks
+    ports:
+      - "5000:80"
+    depends_on:
+      - mssql
+
+  mssql:
+    image: "microsoft/mssql-server-linux"
+    restart: always
+    volumes:
+      - mssql-data:/var/opt/mssql
+    container_name: mssql
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: 'Y'
+      SA_PASSWORD: '@SQLserverpa55'
+      MSSQL_PID: 'Express'
+      
+volumes:
+  mssql-data:
