@@ -1,6 +1,8 @@
 # ASP.NET Core MVC
 
-Crud Tasks with Entity Framework and SqlServer with Docker
+Crud Tasks with Entity Framework and SqlServer with Docker  
+
+![application](/images/taskslive.gif)
 
 # Clone and UP
 
