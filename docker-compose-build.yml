@@ -15,7 +15,7 @@ services:
       MSSQL_PID: 'Express'
 
   webtasks:
-    image: "aspnet.core.mvc.tasks"
+    image: "aspnetcoremvctasks"
     restart: always
     build:
       context: .
