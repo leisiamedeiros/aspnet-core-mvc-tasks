@@ -1,41 +1,37 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Tasks.Models;
-using Tasks.Models.Data;
-using Task = Tasks.Models.Task;
+using Tasks.Domain.Services;
+using Task = Tasks.Domain.Models.Task;
 
-namespace tasks.Controllers
+namespace Tasks.Controllers
 {
     public class TaskController : Controller
     {
-        private readonly TaskContext _context;
+        private readonly ITaskService _taskService;
 
-        public TaskController(TaskContext context)
+        public TaskController(ITaskService taskService)
         {
-            _context = context;
+            _taskService = taskService;
         }
 
         // GET: Task
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Tasks.ToListAsync());
+            return View(await _taskService.ListAsync());
         }
 
         // GET: Task/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
 
-            var task = await _context.Tasks
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var task = await _taskService.FindByIdAsync(id);
+
             if (task == null)
             {
                 return NotFound();
@@ -59,22 +55,22 @@ namespace tasks.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(task);
-                await _context.SaveChangesAsync();
+                await _taskService.AddAsync(task);
+
                 return RedirectToAction(nameof(Index));
             }
             return View(task);
         }
 
         // GET: Task/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
 
-            var task = await _context.Tasks.FindAsync(id);
+            var task = await _taskService.FindByIdAsync(id);
             if (task == null)
             {
                 return NotFound();
@@ -91,21 +87,20 @@ namespace tasks.Controllers
         {
             if (id != task.Id)
             {
-                return NotFound();
+                return await Task<IActionResult>.Run(NotFound);
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(task);
-                    await _context.SaveChangesAsync();
+                    _taskService.Update(task);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TaskExists(task.Id))
+                    if (!_taskService.Exists(task.Id))
                     {
-                        return NotFound();
+                        return await Task<IActionResult>.Run(NotFound);
                     }
                     else
                     {
@@ -118,15 +113,15 @@ namespace tasks.Controllers
         }
 
         // GET: Task/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
 
-            var task = await _context.Tasks
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var task = await _taskService.FindByIdAsync(id);
+
             if (task == null)
             {
                 return NotFound();
@@ -140,15 +135,11 @@ namespace tasks.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
-            _context.Tasks.Remove(task);
-            await _context.SaveChangesAsync();
+            var task = await _taskService.FindByIdAsync(id);
+
+            _taskService.Remove(task);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TaskExists(int id)
-        {
-            return _context.Tasks.Any(e => e.Id == id);
-        }
     }
 }

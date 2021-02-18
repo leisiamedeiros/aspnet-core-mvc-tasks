@@ -3,10 +3,9 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Tasks.Models.Data;
+using Tasks.Persistence.Contexts;
 
-namespace tasks.Migrations
+namespace Tasks.Migrations
 {
     [DbContext(typeof(TaskContext))]
     partial class TaskContextModelSnapshot : ModelSnapshot

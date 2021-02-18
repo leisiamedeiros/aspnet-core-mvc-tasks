@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Tasks.Models
+namespace Tasks.Domain.Models
 {
     public class Task
     {

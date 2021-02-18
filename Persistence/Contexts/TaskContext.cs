@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Tasks.Domain.Models;
 
-namespace Tasks.Models.Data
+namespace Tasks.Persistence.Contexts
 {
     public class TaskContext : DbContext
     {
@@ -8,6 +9,6 @@ namespace Tasks.Models.Data
         { }
 
         public DbSet<Task> Tasks { get; set; }
-        
+
     }
 }

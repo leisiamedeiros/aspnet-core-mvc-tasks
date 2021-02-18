@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Tasks.Models.Data;
+using Tasks.Domain.Repositories;
+using Tasks.Domain.Services;
+using Tasks.Persistence.Contexts;
+using Tasks.Persistence.Data;
+using Tasks.Services;
 
-namespace tasks
+namespace Tasks
 {
     public class Startup
     {
@@ -32,12 +31,15 @@ namespace tasks
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddDbContext<TaskContext>( 
+            services.AddDbContext<TaskContext>(
                 options => options.UseSqlServer(Configuration["MSSQL_TASK_DB"])
             );
+
+            services.AddScoped<ITaskService, TaskService>();
+            services.AddScoped<TaskRepository, TaskRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
